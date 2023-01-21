@@ -23,7 +23,7 @@ const run = async () => {
     
     //test token
     const response =  await axios.default({
-      url: 'https://api.github.com/app/installations', 
+      url: 'https://api.github.com/app', 
       method: 'get',
       responseType: 'json',
       headers: {
@@ -34,7 +34,7 @@ const run = async () => {
 
     info(JSON.stringify(response.data, null, 2));
 
-    // setSecret(token);
+    setSecret(token);
     setOutput("token", token);
     setOutput("authorization", `bearer ${token}`);
     
