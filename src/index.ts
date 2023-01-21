@@ -3,6 +3,7 @@ import { getInput, info, setFailed, setOutput, setSecret } from "@actions/core";
 import ensureError from "ensure-error";
 import isBase64 from "is-base64";
 import { fetchAppToken } from "./fetch-app-token.js";
+import axios, { AxiosResponse } from 'axios'
 
 const run = async () => {
   try {
@@ -19,6 +20,17 @@ const run = async () => {
       appId,
       privateKey
     });
+    
+    //test token
+    const { token } = await getAppAuthentication(state);
+    const response =  await axios.get(config.http_url, {
+      method: 'get',
+      responseType: 'stream',
+      headers: {
+        authorization:`bearer ${token}`
+      }});
+      
+    info(response);
 
     setSecret(installationToken);
     setOutput("token", installationToken);
