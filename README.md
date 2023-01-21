@@ -1,34 +1,60 @@
-# GitHub App Token
 
-This [JavaScript GitHub Action](https://help.github.com/en/actions/building-actions/about-actions#javascript-actions) can be used to impersonate a GitHub App when `secrets.GITHUB_TOKEN`'s limitations are too restrictive and a personal access token is not suitable.
+# GitHub App JWTToken
 
-For instance, from [GitHub Actions' docs](https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow):
+Based on https://github.com/tibdex/github-app-token but returning the APP key in a jwt format instead of installation token
 
-> When you use the repository's `GITHUB_TOKEN` to perform tasks, events triggered by the `GITHUB_TOKEN`, with the exception of `workflow_dispatch` and `repository_dispatch`, will not create a new workflow run.
-> This prevents you from accidentally creating recursive workflow runs.
-> For example, if a workflow run pushes code using the repository's `GITHUB_TOKEN`, a new workflow will not run even when the repository contains a workflow configured to run when push events occur.
 
-A workaround is to use a [personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) from a [personal user/bot account](https://help.github.com/en/github/getting-started-with-github/types-of-github-accounts#personal-user-accounts).
-However, for organizations, GitHub Apps are [a more appropriate automation solution](https://developer.github.com/apps/differences-between-apps/#machine-vs-bot-accounts).
 
-# Example Workflow
+
+## Example Workflow
 
 ```yml
 jobs:
-  job:
+  scheduled:
     runs-on: ubuntu-latest
-    steps:
+    environment: my-app
+    steps: 
+    # Genarates github app token 
       - name: Generate token
         id: generate_token
         uses: api-io/github-app-jwt@v1
         with:
           app_id: ${{ secrets.APP_ID }}
-
           private_key: ${{ secrets.PRIVATE_KEY }}
-
+          
+      # print the token
       - name: Use token
         env:
           TOKEN: ${{ steps.generate_token.outputs.token }}
         run: |
           echo "The generated token is masked: ${TOKEN}"
+```
+
+## Real-Life Workflow
+
+```yml
+jobs:
+  scheduled:
+    runs-on: ubuntu-latest
+    environment: flat-api-app
+    steps:  
+      # The first step is to check out the repository so it can read the files inside of it and do other operations
+      - name: Check out repo
+        uses: actions/checkout@v2
+  
+    # Genarates GitHub application jwt from the private key 
+      - name: Generate token
+        id: generate_token
+        uses: api-io/github-app-jwt@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.PRIVATE_KEY }}
+          
+      # This step is a Flat Action step. We fetch the repositories on which the app is installed and save them as repositories.json
+      - name: Fetch data 
+        uses: githubocto/flat@v3
+        with:
+          http_url: https://api.github.com/installation/repositories
+          downloaded_filename: store/repositories.json
+          authorization: ${{ steps.generate_token.outputs.token }} # an API key/secret for the GitHub API being used in the grahpQL query
 ```
