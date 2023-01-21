@@ -34,8 +34,10 @@ const run = async () => {
 
     info(JSON.stringify(response.data, null, 2));
 
-    setSecret(token);
+    // setSecret(token);
     setOutput("token", token);
+    setOutput("authorization", `bearer ${token}`);
+    
     info("Token generated successfully!");
   } catch (_error: unknown) {
     const error = ensureError(_error);
