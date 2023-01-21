@@ -1,5 +1,5 @@
 
-# GitHub App JWTToken
+# GitHub App JWT Token
 
 Based on https://github.com/tibdex/github-app-token but returning the APP key in a jwt format instead of installation token
 
