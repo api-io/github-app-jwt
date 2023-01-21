@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Generate token
         id: generate_token
-        uses: tibdex/github-app-token@v1
+        uses: api-io/github-app-jwt@v1
         with:
           app_id: ${{ secrets.APP_ID }}
 
