@@ -16,14 +16,13 @@ const run = async () => {
       : privateKeyInput;
 
 
-    const installationToken = await fetchAppToken({
+    const token = await fetchAppToken({
       appId,
       privateKey
     });
     
     //test token
-    const { token } = await getAppAuthentication(state);
-    const response =  await axios.get(config.http_url, {
+    const response =  await axios.get('https://api.github.com/app/installations', {
       method: 'get',
       responseType: 'stream',
       headers: {
@@ -32,8 +31,8 @@ const run = async () => {
       
     info(response);
 
-    setSecret(installationToken);
-    setOutput("token", installationToken);
+    setSecret(token);
+    setOutput("token", token);
     info("Token generated successfully!");
   } catch (_error: unknown) {
     const error = ensureError(_error);
