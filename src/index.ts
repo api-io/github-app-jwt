@@ -3,7 +3,7 @@ import { getInput, info, setFailed, setOutput, setSecret } from "@actions/core";
 import ensureError from "ensure-error";
 import isBase64 from "is-base64";
 import { fetchAppToken } from "./fetch-app-token.js";
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 
 const run = async () => {
   try {
@@ -22,14 +22,17 @@ const run = async () => {
     });
     
     //test token
-    const response =  await axios.get('https://api.github.com/app/installations', {
+    const response =  await axios.default({
+      url: 'https://api.github.com/app/installations', 
       method: 'get',
-      responseType: 'stream',
+      responseType: 'json',
       headers: {
         authorization:`bearer ${token}`
       }});
-      
-    info(response);
+
+    info(`Fetching APP ${appId} installations response with ${response.statusText}`);
+
+    info(JSON.stringify(response.data, null, 2));
 
     setSecret(token);
     setOutput("token", token);
