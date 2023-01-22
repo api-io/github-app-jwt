@@ -41,7 +41,7 @@ const run = async () => {
 
     setSecret(installationToken);
     setOutput("token", installationToken);
-    setOutput("authorization", `bearer ${token}`);
+    setOutput("authorization", `bearer ${installationToken}`);
 
     info("Token generated successfully!");
   } catch (_error: unknown) {

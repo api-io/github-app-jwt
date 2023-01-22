@@ -8,7 +8,6 @@ import axios from 'axios'
 const run = async () => {
   try {
 
-    const type = getInput("type", { default: "app" });
 
     const appId = getInput("app_id", { required: true });
 
@@ -24,8 +23,8 @@ const run = async () => {
       appId,
       privateKey
     });
-    
-  
+
+    await test_token({token, appId});
 
     setSecret(token);
 
@@ -40,6 +39,24 @@ const run = async () => {
   } catch (_error: unknown) {
     const error = ensureError(_error);
     setFailed(error);
+  }
+
+
+  async function test_token({token, appId}:{token:string, appId:string}){
+
+    //test token
+    const response =  await axios.default({
+      url: 'https://api.github.com/app',
+      method: 'get',
+      responseType: 'json',
+      headers: {
+        authorization:`bearer ${token}`
+      }});
+
+    info(`Fetching APP ${appId} installations response with ${response.statusText}`);
+
+    info(JSON.stringify(response.data, null, 2));
+
   }
 };
 
