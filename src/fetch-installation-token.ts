@@ -18,7 +18,7 @@ export const fetchInstallationToken = async ({
   owner: string;
   permissions?: Record<string, string>;
   privateKey: string;
-  repo: string;
+  repo?: string;
 }>): Promise<string> => {
   const app = createAppAuth({
     appId,
@@ -60,3 +60,6 @@ export const fetchInstallationToken = async ({
     });
   }
 };
+
+
+function createInstallationAccessToken({installationId})
