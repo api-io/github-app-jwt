@@ -45,15 +45,22 @@ const run = async () => {
   async function test_token({token, appId}:{token:string, appId:string}){
 
     //test token
+        
+    
+    const apiUrl = getInput("github_api_url", { required: true });
+    
+    info(`Fetching APP ${appId} installations from ${apiUrl}`);
+
     const response =  await axios.default({
-      url: 'https://api.github.com/app',
+      url:  apiUrl,
       method: 'get',
       responseType: 'json',
       headers: {
         authorization:`bearer ${token}`
       }});
-
+    
     info(`Fetching APP ${appId} installations response with ${response.statusText}`);
+
 
     info(JSON.stringify(response.data, null, 2));
 
